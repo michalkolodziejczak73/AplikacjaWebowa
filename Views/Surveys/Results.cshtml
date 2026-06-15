@@ -1,0 +1,107 @@
+﻿@model AplikacjaWebowa.ViewModels.SurveyResultsViewModel
+
+@using System.Text.Json
+
+@{
+    ViewData["Title"] = "Wyniki ankiety";
+
+    var labels = JsonSerializer.Serialize(
+        Model.Options.Select(o => o.Text));
+
+    var values = JsonSerializer.Serialize(
+        Model.Options.Select(o => o.VoteCount));
+}
+
+<h1 class="mb-3">Wyniki ankiety</h1>
+
+<h4 class="mb-4">@Model.Question</h4>
+
+<div class="alert alert-info">
+    Łączna liczba oddanych głosów:
+    <strong>@Model.TotalVotes</strong>
+</div>
+
+@if (Model.TotalVotes == 0)
+{
+    <div class="alert alert-warning">
+        W tej ankiecie nie oddano jeszcze żadnego głosu.
+    </div>
+}
+else
+{
+    <div class="row">
+        <div class="col-md-7">
+            <canvas id="resultsChart"></canvas>
+        </div>
+    </div>
+
+    <table class="table table-striped mt-4">
+        <thead>
+            <tr>
+                <th>Odpowiedź</th>
+                <th>Liczba głosów</th>
+                <th>Wynik procentowy</th>
+            </tr>
+        </thead>
+
+        <tbody>
+            @foreach (var option in Model.Options)
+            {
+                <tr>
+                    <td>@option.Text</td>
+                    <td>@option.VoteCount</td>
+                    <td>@option.Percentage%</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+<a asp-action="Details"
+   asp-route-id="@Model.SurveyId"
+   class="btn btn-primary">
+    Przejdź do ankiety
+</a>
+
+<a asp-action="Index"
+   class="btn btn-secondary">
+    Powrót do listy
+</a>
+
+@section Scripts {
+    @if (Model.TotalVotes > 0)
+    {
+        <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+        <script>
+            const chartLabels = @Html.Raw(labels);
+            const chartValues = @Html.Raw(values);
+
+            const chartContext =
+            document.getElementById('resultsChart');
+
+            new Chart(chartContext, {
+            type: 'bar',
+            data: {
+            labels: chartLabels,
+            datasets: [{
+            label: 'Liczba głosów',
+            data: chartValues,
+            borderWidth: 1
+            }]
+            },
+            options: {
+            responsive: true,
+            scales: {
+            y: {
+            beginAtZero: true,
+            ticks: {
+            precision: 0
+            }
+            }
+            }
+            }
+            });
+        </script>
+    }
+}

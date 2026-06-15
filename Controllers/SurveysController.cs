@@ -166,6 +166,7 @@ namespace AplikacjaWebowa.Controllers
                     new { id = model.SurveyId });
             }
 
+
             if (!model.SelectedOptionId.HasValue)
             {
                 ModelState.AddModelError(
@@ -208,6 +209,40 @@ namespace AplikacjaWebowa.Controllers
             return RedirectToAction(
                 nameof(Details),
                 new { id = model.SurveyId });
+        }
+        public async Task<IActionResult> Results(int id)
+        {
+            var survey = await _context.Surveys
+                .Include(s => s.Options)
+                .ThenInclude(o => o.Votes)
+                .FirstOrDefaultAsync(s => s.Id == id);
+
+            if (survey == null)
+            {
+                return NotFound();
+            }
+
+            int totalVotes = survey.Options
+                .Sum(o => o.Votes.Count);
+
+            var model = new SurveyResultsViewModel
+            {
+                SurveyId = survey.Id,
+                Question = survey.Question,
+                TotalVotes = totalVotes,
+                Options = survey.Options.Select(o => new OptionResultViewModel
+                {
+                    Text = o.Text,
+                    VoteCount = o.Votes.Count,
+                    Percentage = totalVotes == 0
+                        ? 0
+                        : Math.Round(
+                            (double)o.Votes.Count / totalVotes * 100,
+                            1)
+                }).ToList()
+            };
+
+            return View(model);
         }
     }
 }
