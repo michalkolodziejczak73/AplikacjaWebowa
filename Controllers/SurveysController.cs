@@ -125,7 +125,8 @@ namespace AplikacjaWebowa.Controllers
                 SurveyId = survey.Id,
                 Question = survey.Question,
                 Options = survey.Options,
-                AlreadyVoted = alreadyVoted
+                AlreadyVoted = alreadyVoted,
+                IsActive = survey.IsActive
             };
 
             return View(model);
@@ -149,6 +150,16 @@ namespace AplikacjaWebowa.Controllers
             if (survey == null)
             {
                 return NotFound();
+            }
+
+            if (!survey.IsActive)
+            {
+                TempData["ErrorMessage"] =
+                    "Ta ankieta jest obecnie nieaktywna.";
+
+                return RedirectToAction(
+                    nameof(Details),
+                    new { id = model.SurveyId });
             }
 
             bool alreadyVoted = await _context.Votes
@@ -189,6 +200,7 @@ namespace AplikacjaWebowa.Controllers
                 model.Question = survey.Question;
                 model.Options = survey.Options;
                 model.AlreadyVoted = false;
+                model.IsActive = survey.IsActive;
 
                 return View("Details", model);
             }
@@ -243,6 +255,113 @@ namespace AplikacjaWebowa.Controllers
             };
 
             return View(model);
+        }
+        [Authorize(Roles = "Ankieter")]
+        public async Task<IActionResult> Votes(int id)
+        {
+            var survey = await _context.Surveys
+                .Include(s => s.Options)
+                .ThenInclude(o => o.Votes)
+                .FirstOrDefaultAsync(s => s.Id == id);
+
+            if (survey == null)
+            {
+                return NotFound();
+            }
+
+            return View(survey);
+        }
+
+        [Authorize(Roles = "Ankieter")]
+        public async Task<IActionResult> Edit(int id)
+        {
+            var survey = await _context.Surveys
+                .FirstOrDefaultAsync(s => s.Id == id);
+
+            if (survey == null)
+            {
+                return NotFound();
+            }
+
+            var model = new EditSurveyViewModel
+            {
+                Id = survey.Id,
+                Question = survey.Question,
+                IsActive = survey.IsActive
+            };
+
+            return View(model);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+
+        [Authorize(Roles = "Ankieter")]
+        public async Task<IActionResult> Edit(EditSurveyViewModel model)
+        {
+            if (!ModelState.IsValid)
+            {
+                return View(model);
+            }
+
+            var survey = await _context.Surveys
+                .FirstOrDefaultAsync(s => s.Id == model.Id);
+
+            if (survey == null)
+            {
+                return NotFound();
+            }
+
+            survey.Question = model.Question.Trim();
+            survey.IsActive = model.IsActive;
+
+            await _context.SaveChangesAsync();
+
+            TempData["SuccessMessage"] =
+                "Ankieta została zaktualizowana.";
+
+            return RedirectToAction(nameof(Index));
+        }
+
+        [Authorize(Roles = "Ankieter")]
+        public async Task<IActionResult> Delete(int id)
+        {
+            var survey = await _context.Surveys
+                .Include(s => s.Options)
+                .ThenInclude(o => o.Votes)
+                .FirstOrDefaultAsync(s => s.Id == id);
+
+            if (survey == null)
+            {
+                return NotFound();
+            }
+
+            return View(survey);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+
+        [Authorize(Roles = "Ankieter")]
+        public async Task<IActionResult> DeleteConfirmed(int id)
+        {
+            var survey = await _context.Surveys
+                .Include(s => s.Options)
+                .ThenInclude(o => o.Votes)
+                .FirstOrDefaultAsync(s => s.Id == id);
+
+            if (survey == null)
+            {
+                return NotFound();
+            }
+
+            _context.Surveys.Remove(survey);
+            await _context.SaveChangesAsync();
+
+            TempData["SuccessMessage"] =
+                "Ankieta została usunięta.";
+
+            return RedirectToAction(nameof(Index));
         }
     }
 }

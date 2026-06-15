@@ -4,7 +4,15 @@
     ViewData["Title"] = "Głosowanie";
 }
 
-<h1 class="mb-4">@Model.Question</h1>
+<div class="page-header">
+    <div>
+        <span class="section-label">Głosowanie</span>
+        <h1 class="page-title">@Model.Question</h1>
+        <p class="page-description">
+            Wybierz jedną odpowiedź i zatwierdź swój głos.
+        </p>
+    </div>
+</div>
 
 @if (TempData["SuccessMessage"] != null)
 {
@@ -20,49 +28,84 @@
     </div>
 }
 
-@if (Model.AlreadyVoted)
-{
-    <div class="alert alert-info">
-        Oddałeś już głos w tej ankiecie.
-    </div>
-}
-else
-{
-    <form asp-action="Vote" method="post">
-        <input asp-for="SurveyId" type="hidden" />
+<div class="content-card vote-card">
+    @if (!Model.IsActive)
+    {
+        <div class="alert alert-warning mb-0">
+            Ta ankieta jest obecnie nieaktywna.
+            Nie można oddawać w niej głosów.
+        </div>
+    }
+    else if (Model.AlreadyVoted)
+    {
+        <div class="alert alert-info mb-0">
+            Oddałeś już głos w tej ankiecie.
+        </div>
+    }
+    else
+    {
+        <form asp-action="Vote" method="post">
+            <input asp-for="SurveyId" type="hidden" />
 
-        <div asp-validation-summary="ModelOnly"
-             class="text-danger mb-3"></div>
+            <div asp-validation-summary="ModelOnly"
+                 class="text-danger mb-3"></div>
 
-        @foreach (var option in Model.Options)
-        {
-            <div class="form-check mb-3">
-                <input class="form-check-input"
-                       type="radio"
-                       asp-for="SelectedOptionId"
-                       value="@option.Id"
-                       id="option-@option.Id" />
+            <div class="vote-options">
+                @foreach (var option in Model.Options)
+                {
+                    <label class="vote-option"
+                           for="option-@option.Id">
 
-                <label class="form-check-label"
-                       for="option-@option.Id">
-                    @option.Text
-                </label>
+                        <input class="form-check-input"
+                               type="radio"
+                               asp-for="SelectedOptionId"
+                               value="@option.Id"
+                               id="option-@option.Id" />
+
+                        <span>@option.Text</span>
+                    </label>
+                }
             </div>
-        }
 
-        <span asp-validation-for="SelectedOptionId"
-              class="text-danger d-block mb-3"></span>
+            <span asp-validation-for="SelectedOptionId"
+                  class="text-danger d-block mt-2"></span>
 
-        <button type="submit" class="btn btn-primary">
-            Oddaj głos
-        </button>
-    </form>
-}
+            <div class="form-actions">
+                <button type="submit"
+                        class="btn btn-primary">
+                    Oddaj głos
+                </button>
 
-<a asp-action="Index"
-   class="btn btn-secondary mt-3">
-    Powrót do listy
-</a>
+                <a asp-action="Results"
+                   asp-route-id="@Model.SurveyId"
+                   class="btn btn-outline-success">
+                    Zobacz wyniki
+                </a>
+
+                <a asp-action="Index"
+                   class="btn btn-secondary">
+                    Powrót
+                </a>
+            </div>
+        </form>
+    }
+
+    @if (!Model.IsActive || Model.AlreadyVoted)
+    {
+        <div class="form-actions">
+            <a asp-action="Results"
+               asp-route-id="@Model.SurveyId"
+               class="btn btn-outline-success">
+                Zobacz wyniki
+            </a>
+
+            <a asp-action="Index"
+               class="btn btn-secondary">
+                Powrót
+            </a>
+        </div>
+    }
+</div>
 
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />

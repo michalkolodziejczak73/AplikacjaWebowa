@@ -19,18 +19,55 @@ namespace AplikacjaWebowa.Data
             {
                 if (!await roleManager.RoleExistsAsync(role))
                 {
-                    await roleManager.CreateAsync(new IdentityRole(role));
+                    await roleManager.CreateAsync(
+                        new IdentityRole(role));
                 }
             }
 
             string ankieterEmail = "michal@test1.pl";
 
-            var ankieter = await userManager.FindByEmailAsync(ankieterEmail);
+            var ankieter =
+                await userManager.FindByEmailAsync(ankieterEmail);
 
-            if (ankieter != null &&
-                !await userManager.IsInRoleAsync(ankieter, "Ankieter"))
+            if (ankieter != null)
             {
-                await userManager.AddToRoleAsync(ankieter, "Ankieter");
+                if (!await userManager.IsInRoleAsync(
+                    ankieter,
+                    "Ankieter"))
+                {
+                    await userManager.AddToRoleAsync(
+                        ankieter,
+                        "Ankieter");
+                }
+
+                if (await userManager.IsInRoleAsync(
+                    ankieter,
+                    "Respondent"))
+                {
+                    await userManager.RemoveFromRoleAsync(
+                        ankieter,
+                        "Respondent");
+                }
+            }
+
+            var users = userManager.Users.ToList();
+
+            foreach (var user in users)
+            {
+                if (user.Email == ankieterEmail)
+                {
+                    continue;
+                }
+
+                var userRoles =
+                    await userManager.GetRolesAsync(user);
+
+                if (userRoles.Count == 0)
+                {
+                    await userManager.AddToRoleAsync(
+                        user,
+                        "Respondent");
+                }
             }
         }
     }

@@ -1,8 +1,79 @@
 ﻿@{
-    ViewData["Title"] = "Home Page";
+    ViewData["Title"] = "Strona główna";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
-</div>
+<section class="hero-section">
+    <div class="hero-content">
+        <span class="hero-label">Proste ankiety online</span>
+
+        <h1>Twórz ankiety i poznawaj opinie</h1>
+
+        <p>
+            Załóż ankietę, zbieraj odpowiedzi i sprawdzaj wyniki
+            w czytelnej formie.
+        </p>
+
+        <div class="hero-actions">
+            @if (User.Identity?.IsAuthenticated == true)
+            {
+                <a asp-controller="Surveys"
+                   asp-action="Index"
+                   class="btn btn-primary btn-lg">
+                    Zobacz ankiety
+                </a>
+
+                @if (User.IsInRole("Ankieter"))
+                {
+                    <a asp-controller="Surveys"
+                       asp-action="Create"
+                       class="btn btn-outline-light btn-lg">
+                        Utwórz ankietę
+                    </a>
+                }
+            }
+            else
+            {
+                <a asp-area="Identity"
+                   asp-page="/Account/Register"
+                   class="btn btn-primary btn-lg">
+                    Załóż konto
+                </a>
+
+                <a asp-area="Identity"
+                   asp-page="/Account/Login"
+                   class="btn btn-outline-light btn-lg">
+                    Zaloguj się
+                </a>
+            }
+        </div>
+    </div>
+</section>
+
+<section class="features-section">
+    <div class="feature-card">
+        <div class="feature-number">01</div>
+        <h3>Szybkie tworzenie</h3>
+        <p>
+            Dodaj pytanie oraz kilka wariantów odpowiedzi
+            i od razu udostępnij ankietę.
+        </p>
+    </div>
+
+    <div class="feature-card">
+        <div class="feature-number">02</div>
+        <h3>Jedno głosowanie</h3>
+        <p>
+            Każdy respondent może oddać tylko jeden głos
+            w konkretnej ankiecie.
+        </p>
+    </div>
+
+    <div class="feature-card">
+        <div class="feature-number">03</div>
+        <h3>Czytelne wyniki</h3>
+        <p>
+            Wyniki są prezentowane w tabeli oraz
+            na wykresie słupkowym.
+        </p>
+    </div>
+</section>

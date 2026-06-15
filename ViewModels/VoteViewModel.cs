@@ -15,5 +15,7 @@ namespace AplikacjaWebowa.ViewModels
         public int? SelectedOptionId { get; set; }
 
         public bool AlreadyVoted { get; set; }
+
+        public bool IsActive { get; set; }
     }
 }

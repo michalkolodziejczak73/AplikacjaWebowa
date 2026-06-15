@@ -1,0 +1,41 @@
+﻿@model AplikacjaWebowa.Models.Survey
+
+@{
+    ViewData["Title"] = "Usuń ankietę";
+}
+
+<h1 class="mb-4">Usuń ankietę</h1>
+
+<div class="alert alert-danger">
+    Czy na pewno chcesz usunąć tę ankietę?
+</div>
+
+<div class="card mb-4">
+    <div class="card-body">
+        <h5 class="card-title">@Model.Question</h5>
+
+        <p class="card-text">
+            Data utworzenia:
+            @Model.CreatedAt.ToString("dd.MM.yyyy HH:mm")
+        </p>
+
+        <p class="card-text">
+            Liczba opcji: @Model.Options.Count
+        </p>
+    </div>
+</div>
+
+<form asp-action="DeleteConfirmed"
+      asp-route-id="@Model.Id"
+      method="post">
+
+    <button type="submit"
+            class="btn btn-danger">
+        Usuń ankietę
+    </button>
+
+    <a asp-action="Index"
+       class="btn btn-secondary">
+        Anuluj
+    </a>
+</form>

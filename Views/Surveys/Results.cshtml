@@ -12,13 +12,19 @@
         Model.Options.Select(o => o.VoteCount));
 }
 
-<h1 class="mb-3">Wyniki ankiety</h1>
+<div class="page-header">
+    <div>
+        <span class="section-label">Statystyki</span>
+        <h1 class="page-title">Wyniki ankiety</h1>
+        <p class="page-description">
+            @Model.Question
+        </p>
+    </div>
 
-<h4 class="mb-4">@Model.Question</h4>
-
-<div class="alert alert-info">
-    Łączna liczba oddanych głosów:
-    <strong>@Model.TotalVotes</strong>
+    <div class="results-counter">
+        <span>Oddane głosy</span>
+        <strong>@Model.TotalVotes</strong>
+    </div>
 </div>
 
 @if (Model.TotalVotes == 0)
@@ -29,44 +35,52 @@
 }
 else
 {
-    <div class="row">
-        <div class="col-md-7">
+    <div class="results-layout">
+        <div class="content-card chart-card">
+            <h3>Wykres wyników</h3>
             <canvas id="resultsChart"></canvas>
         </div>
+
+        <div class="content-card">
+            <h3>Szczegółowe wyniki</h3>
+
+            <div class="results-list">
+                @foreach (var option in Model.Options)
+                {
+                    <div class="result-item">
+                        <div class="result-item-heading">
+                            <strong>@option.Text</strong>
+                            <span>
+                                @option.VoteCount głosów
+                            </span>
+                        </div>
+
+                        <div class="result-progress">
+                            <div class="result-progress-bar"
+                                 style="width: @option.Percentage%">
+                            </div>
+                        </div>
+
+                        <small>@option.Percentage%</small>
+                    </div>
+                }
+            </div>
+        </div>
     </div>
-
-    <table class="table table-striped mt-4">
-        <thead>
-            <tr>
-                <th>Odpowiedź</th>
-                <th>Liczba głosów</th>
-                <th>Wynik procentowy</th>
-            </tr>
-        </thead>
-
-        <tbody>
-            @foreach (var option in Model.Options)
-            {
-                <tr>
-                    <td>@option.Text</td>
-                    <td>@option.VoteCount</td>
-                    <td>@option.Percentage%</td>
-                </tr>
-            }
-        </tbody>
-    </table>
 }
 
-<a asp-action="Details"
-   asp-route-id="@Model.SurveyId"
-   class="btn btn-primary">
-    Przejdź do ankiety
-</a>
+<div class="form-actions">
+    <a asp-action="Details"
+       asp-route-id="@Model.SurveyId"
+       class="btn btn-primary">
+        Przejdź do ankiety
+    </a>
 
-<a asp-action="Index"
-   class="btn btn-secondary">
-    Powrót do listy
-</a>
+    <a asp-action="Index"
+       class="btn btn-secondary">
+        Powrót do listy
+    </a>
+</div>
 
 @section Scripts {
     @if (Model.TotalVotes > 0)

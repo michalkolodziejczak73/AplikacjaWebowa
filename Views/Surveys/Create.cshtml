@@ -4,58 +4,95 @@
     ViewData["Title"] = "Utwórz ankietę";
 }
 
-<h1 class="mb-4">Utwórz ankietę</h1>
+<div class="page-header">
+    <div>
+        <span class="section-label">Nowa ankieta</span>
+        <h1 class="page-title">Utwórz ankietę</h1>
+        <p class="page-description">
+            Dodaj pytanie oraz od dwóch do czterech odpowiedzi.
+        </p>
+    </div>
+</div>
 
-<div class="row">
-    <div class="col-md-7">
-        <form asp-action="Create" method="post">
-            <div asp-validation-summary="ModelOnly"
-                 class="text-danger mb-3"></div>
+<div class="content-card form-card">
+    <form asp-action="Create" method="post">
+        <div asp-validation-summary="ModelOnly"
+             class="text-danger mb-3"></div>
 
+        <div class="mb-4">
+            <label asp-for="Question"
+                   class="form-label"></label>
+
+            <input asp-for="Question"
+                   class="form-control form-control-lg"
+                   placeholder="Wpisz pytanie ankiety" />
+
+            <span asp-validation-for="Question"
+                  class="text-danger"></span>
+        </div>
+
+        <div class="options-grid">
             <div class="mb-3">
-                <label asp-for="Question" class="form-label"></label>
-                <input asp-for="Question" class="form-control" />
-                <span asp-validation-for="Question"
-                      class="text-danger"></span>
-            </div>
+                <label asp-for="Option1"
+                       class="form-label"></label>
 
-            <div class="mb-3">
-                <label asp-for="Option1" class="form-label"></label>
-                <input asp-for="Option1" class="form-control" />
+                <input asp-for="Option1"
+                       class="form-control"
+                       placeholder="Pierwsza odpowiedź" />
+
                 <span asp-validation-for="Option1"
                       class="text-danger"></span>
             </div>
 
             <div class="mb-3">
-                <label asp-for="Option2" class="form-label"></label>
-                <input asp-for="Option2" class="form-control" />
+                <label asp-for="Option2"
+                       class="form-label"></label>
+
+                <input asp-for="Option2"
+                       class="form-control"
+                       placeholder="Druga odpowiedź" />
+
                 <span asp-validation-for="Option2"
                       class="text-danger"></span>
             </div>
 
             <div class="mb-3">
-                <label asp-for="Option3" class="form-label"></label>
-                <input asp-for="Option3" class="form-control" />
+                <label asp-for="Option3"
+                       class="form-label"></label>
+
+                <input asp-for="Option3"
+                       class="form-control"
+                       placeholder="Opcjonalna odpowiedź" />
+
                 <span asp-validation-for="Option3"
                       class="text-danger"></span>
             </div>
 
             <div class="mb-3">
-                <label asp-for="Option4" class="form-label"></label>
-                <input asp-for="Option4" class="form-control" />
+                <label asp-for="Option4"
+                       class="form-label"></label>
+
+                <input asp-for="Option4"
+                       class="form-control"
+                       placeholder="Opcjonalna odpowiedź" />
+
                 <span asp-validation-for="Option4"
                       class="text-danger"></span>
             </div>
+        </div>
 
-            <button type="submit" class="btn btn-primary">
+        <div class="form-actions">
+            <button type="submit"
+                    class="btn btn-primary">
                 Zapisz ankietę
             </button>
 
-            <a asp-action="Index" class="btn btn-secondary">
+            <a asp-action="Index"
+               class="btn btn-secondary">
                 Anuluj
             </a>
-        </form>
-    </div>
+        </div>
+    </form>
 </div>
 
 @section Scripts {

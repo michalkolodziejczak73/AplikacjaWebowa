@@ -1,0 +1,53 @@
+﻿@model AplikacjaWebowa.Models.Survey
+
+@{
+    ViewData["Title"] = "Lista głosów";
+}
+
+<h1 class="mb-3">Lista głosów</h1>
+
+<h4 class="mb-4">@Model.Question</h4>
+
+@if (!Model.Options.Any(o => o.Votes.Any()))
+{
+    <div class="alert alert-info">
+        W tej ankiecie nie oddano jeszcze żadnych głosów.
+    </div>
+}
+else
+{
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Odpowiedź</th>
+                <th>Identyfikator respondenta</th>
+                <th>Data oddania głosu</th>
+            </tr>
+        </thead>
+
+        <tbody>
+            @foreach (var option in Model.Options)
+            {
+                @foreach (var vote in option.Votes)
+                {
+                    <tr>
+                        <td>@option.Text</td>
+                        <td>@vote.RespondentId</td>
+                        <td>@vote.VotedAt.ToString("dd.MM.yyyy HH:mm")</td>
+                    </tr>
+                }
+            }
+        </tbody>
+    </table>
+}
+
+<a asp-action="Results"
+   asp-route-id="@Model.Id"
+   class="btn btn-primary">
+    Wyniki
+</a>
+
+<a asp-action="Index"
+   class="btn btn-secondary">
+    Powrót do listy
+</a>

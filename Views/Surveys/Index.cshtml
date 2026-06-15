@@ -11,12 +11,19 @@
     </div>
 }
 
-<div class="d-flex justify-content-between align-items-center mb-4">
-    <h1>Lista ankiet</h1>
+<div class="page-header">
+    <div>
+        <span class="section-label">Panel ankiet</span>
+        <h1 class="page-title">Dostępne ankiety</h1>
+        <p class="page-description">
+            Otwórz ankietę, oddaj głos lub sprawdź aktualne wyniki.
+        </p>
+    </div>
 
     @if (User.IsInRole("Ankieter"))
     {
-        <a asp-action="Create" class="btn btn-primary">
+        <a asp-action="Create"
+           class="btn btn-primary">
             Utwórz ankietę
         </a>
     }
@@ -24,65 +31,94 @@
 
 @if (!Model.Any())
 {
-    <div class="alert alert-info">
-        Nie utworzono jeszcze żadnych ankiet.
+    <div class="empty-state">
+        <h3>Brak ankiet</h3>
+        <p>
+            Nie utworzono jeszcze żadnej ankiety.
+        </p>
+
+        @if (User.IsInRole("Ankieter"))
+        {
+            <a asp-action="Create"
+               class="btn btn-primary">
+                Utwórz pierwszą ankietę
+            </a>
+        }
     </div>
 }
 else
 {
-    <table class="table table-striped">
-        <thead>
-            <tr>
-                <th>Pytanie</th>
-                <th>Data utworzenia</th>
-                <th>Status</th>
-                <th>Liczba opcji</th>
-                <th>Akcje</th>
-            </tr>
-        </thead>
+    <div class="survey-list">
+        @foreach (var survey in Model)
+        {
+            <article class="survey-card">
+                <div class="survey-card-main">
+                    <div class="survey-card-heading">
+                        <div>
+                            <h2>@survey.Question</h2>
 
-        <tbody>
-            @foreach (var survey in Model)
-            {
-                <tr>
-                    <td>@survey.Question</td>
+                            <div class="survey-meta">
+                                <span>
+                                    Utworzono:
+                                    @survey.CreatedAt.ToString("dd.MM.yyyy HH:mm")
+                                </span>
 
-                    <td>
-                        @survey.CreatedAt.ToString("dd.MM.yyyy HH:mm")
-                    </td>
+                                <span>
+                                    Opcje: @survey.Options.Count
+                                </span>
+                            </div>
+                        </div>
 
-                    <td>
                         @if (survey.IsActive)
                         {
-                            <span class="badge bg-success">
+                            <span class="status-badge status-active">
                                 Aktywna
                             </span>
                         }
                         else
                         {
-                            <span class="badge bg-secondary">
+                            <span class="status-badge status-inactive">
                                 Nieaktywna
                             </span>
                         }
-                    </td>
+                    </div>
 
-                    <td>@survey.Options.Count</td>
-
-                    <td>
+                    <div class="survey-actions">
                         <a asp-action="Details"
                            asp-route-id="@survey.Id"
-                           class="btn btn-sm btn-outline-primary">
+                           class="btn btn-outline-primary">
                             Otwórz ankietę
                         </a>
 
                         <a asp-action="Results"
                            asp-route-id="@survey.Id"
-                           class="btn btn-sm btn-outline-success">
+                           class="btn btn-outline-success">
                             Wyniki
                         </a>
-                    </td>
-                </tr>
-            }
-        </tbody>
-    </table>
+
+                        @if (User.IsInRole("Ankieter"))
+                        {
+                            <a asp-action="Votes"
+                               asp-route-id="@survey.Id"
+                               class="btn btn-outline-dark">
+                                Lista głosów
+                            </a>
+
+                            <a asp-action="Edit"
+                               asp-route-id="@survey.Id"
+                               class="btn btn-outline-warning">
+                                Edytuj
+                            </a>
+
+                            <a asp-action="Delete"
+                               asp-route-id="@survey.Id"
+                               class="btn btn-outline-danger">
+                                Usuń
+                            </a>
+                        }
+                    </div>
+                </div>
+            </article>
+        }
+    </div>
 }
