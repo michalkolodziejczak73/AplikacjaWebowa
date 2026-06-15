@@ -1,0 +1,63 @@
+﻿@model AplikacjaWebowa.ViewModels.CreateSurveyViewModel
+
+@{
+    ViewData["Title"] = "Utwórz ankietę";
+}
+
+<h1 class="mb-4">Utwórz ankietę</h1>
+
+<div class="row">
+    <div class="col-md-7">
+        <form asp-action="Create" method="post">
+            <div asp-validation-summary="ModelOnly"
+                 class="text-danger mb-3"></div>
+
+            <div class="mb-3">
+                <label asp-for="Question" class="form-label"></label>
+                <input asp-for="Question" class="form-control" />
+                <span asp-validation-for="Question"
+                      class="text-danger"></span>
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="Option1" class="form-label"></label>
+                <input asp-for="Option1" class="form-control" />
+                <span asp-validation-for="Option1"
+                      class="text-danger"></span>
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="Option2" class="form-label"></label>
+                <input asp-for="Option2" class="form-control" />
+                <span asp-validation-for="Option2"
+                      class="text-danger"></span>
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="Option3" class="form-label"></label>
+                <input asp-for="Option3" class="form-control" />
+                <span asp-validation-for="Option3"
+                      class="text-danger"></span>
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="Option4" class="form-label"></label>
+                <input asp-for="Option4" class="form-control" />
+                <span asp-validation-for="Option4"
+                      class="text-danger"></span>
+            </div>
+
+            <button type="submit" class="btn btn-primary">
+                Zapisz ankietę
+            </button>
+
+            <a asp-action="Index" class="btn btn-secondary">
+                Anuluj
+            </a>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

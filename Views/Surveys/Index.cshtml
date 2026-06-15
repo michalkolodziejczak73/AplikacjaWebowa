@@ -1,0 +1,71 @@
+﻿@model IEnumerable<AplikacjaWebowa.Models.Survey>
+
+@{
+    ViewData["Title"] = "Ankiety";
+}
+
+@if (TempData["SuccessMessage"] != null)
+{
+    <div class="alert alert-success">
+        @TempData["SuccessMessage"]
+    </div>
+}
+
+<div class="d-flex justify-content-between align-items-center mb    4">
+    <h1>Lista ankiet</h1>
+
+    @if (User.IsInRole("Ankieter"))
+    {
+        <a asp-action="Create" class="btn btn-primary">
+            Utwórz ankietę
+        </a>
+    }
+</div>
+
+@if (!Model.Any())
+{
+    <div class="alert alert-info">
+        Nie utworzono jeszcze żadnych ankiet.
+    </div>
+}
+else
+{
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Pytanie</th>
+                <th>Data utworzenia</th>
+                <th>Status</th>
+                <th>Liczba opcji</th>
+                <th>Akcje</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var survey in Model)
+            {
+                <tr>
+                    <td>@survey.Question</td>
+                    <td>@survey.CreatedAt.ToString("dd.MM.yyyy HH:mm")</td>
+                    <td>
+                        @if (survey.IsActive)
+                        {
+                            <span class="badge bg-success">Aktywna</span>
+                        }
+                        else
+                        {
+                            <span class="badge bg-secondary">Nieaktywna</span>
+                        }
+                    </td>
+                    <td>@survey.Options.Count</td>
+                    <td>
+                        <a asp-action="Details"
+                           asp-route-id="@survey.Id"
+                           class="btn btn-sm btn-outline-primary">
+                            Otwórz ankietę
+                        </a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}

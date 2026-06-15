@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+using AplikacjaWebowa.Models;
 
 namespace AplikacjaWebowa.Data
 {
@@ -9,5 +10,8 @@ namespace AplikacjaWebowa.Data
             : base(options)
         {
         }
+        public DbSet<Survey> Surveys { get; set; }
+        public DbSet<Option> Options { get; set; }
+        public DbSet<Vote> Votes { get; set; }
     }
 }
